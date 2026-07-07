@@ -4,6 +4,12 @@ Toate schimbările notabile ale șablonului se notează aici, cu cea mai recent�
 **Regulă: orice modificare (de oricine — om sau Claude) primește o intrare nouă
 înainte de commit.** Format: versiune — dată — listă scurtă de schimbări.
 
+## 1.3.1 — 2026-07-07
+
+- **Fix:** numele lungi de firmă din hero nu se mai rup în mijlocul cuvântului
+  (literele animate sunt grupate acum pe cuvinte întregi, cu spații care permit
+  trecerea pe rând doar între cuvinte) — ex. „Vulcanizare AUTO Mari Cris SRL"
+
 ## 1.3.0 — 2026-07-07
 
 - **Meniu hamburger** în header (toate ecranele): overlay full-screen cu blur,
