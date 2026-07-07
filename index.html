@@ -184,6 +184,8 @@
     }, 15000);
   </script>
   <script src="config.js"></script>
+  <script src="firms-vulc.js"></script>
+  <script>(function(){try{var p=new URLSearchParams(location.search).get('f');var F=window.VULCF&&window.VULCF[p];if(F){var C=window.SITE_CONFIG;C.brand.name=F[0];C.brand.city=F[1];var t=F[2];C.contact.phone='+40 '+t.slice(2,5)+' '+t.slice(5,8)+' '+t.slice(8);C.contact.whatsapp=t;C.contact.address=F[1];C.contact.mapsUrl='https://www.google.com/maps?q='+encodeURIComponent(F[0]+' '+F[1]);C.footerNote='SERVICE & PERFORMANCE CENTER';document.title=F[0]+' \u2014 Vulcanizare & anvelope \u00een '+F[1];var md=document.querySelector('meta[name="description"]');if(md)md.setAttribute('content',F[0]+' \u2014 vulcanizare \u0219i service anvelope \u00een '+F[1]+'. Program\u0103ri rapide la telefon sau WhatsApp.');}}catch(e){}})();</script>
   <script src="vendor/lenis.min.js"></script>
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
