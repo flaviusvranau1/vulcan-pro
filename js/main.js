@@ -319,9 +319,9 @@ menuEl.querySelectorAll('a').forEach(a =>
    Brand title -> individual letters (for the tracking-in intro)
    ------------------------------------------------------------ */
 const brandTitle = document.getElementById('brandTitle');
-brandTitle.innerHTML = brandTitle.textContent.trim().split('').map(ch =>
-  ch === ' ' ? '<span class="ltr-space"></span>' : `<span class="ltr">${ch}</span>`
-).join('');
+brandTitle.innerHTML = brandTitle.textContent.trim().split(' ').filter(Boolean).map(w =>
+  '<span class="wrd">' + w.split('').map(ch => `<span class="ltr">${ch}</span>`).join('') + '</span>'
+).join('<span class="ltr-space"></span>');
 
 /* ------------------------------------------------------------
    Preloader: gate on the hero sequence, lazy-load the rest
