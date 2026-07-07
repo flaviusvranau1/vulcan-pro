@@ -87,6 +87,18 @@ function applyConfig() {
     call.style.display = 'none';
   }
 
+  // contact în meniul overlay
+  const menuPhone = document.getElementById('menuPhone');
+  const menuHours = document.getElementById('menuHours');
+  if (contact.phone) {
+    menuPhone.textContent = contact.phone;
+    menuPhone.href = `tel:${contact.phone.replace(/\s/g, '')}`;
+  } else {
+    menuPhone.style.display = 'none';
+  }
+  if (contact.hours) menuHours.textContent = contact.hours;
+  else menuHours.style.display = 'none';
+
   // grila de contact
   const grid = document.getElementById('contactGrid');
   const items = [];
@@ -262,6 +274,43 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     lenis.scrollTo(target, { duration: 1.6, force: true });
   });
 });
+
+/* ------------------------------------------------------------
+   Meniu overlay (hamburger)
+   ------------------------------------------------------------ */
+const menuEl = document.getElementById('menu');
+const navToggle = document.getElementById('navToggle');
+let menuOpen = false;
+
+const menuTl = gsap.timeline({ paused: true })
+  .to(menuEl, { autoAlpha: 1, duration: 0.45, ease: 'power2.out' })
+  .from('.menu-link', {
+    autoAlpha: 0, y: 44, duration: 0.55,
+    stagger: 0.055, ease: 'power3.out',
+  }, '<0.08')
+  .from('.menu-foot', { autoAlpha: 0, y: 16, duration: 0.4 }, '<0.35');
+
+function setMenu(open) {
+  menuOpen = open;
+  document.body.classList.toggle('menu-open', open);
+  navToggle.setAttribute('aria-expanded', String(open));
+  menuEl.setAttribute('aria-hidden', String(!open));
+  if (open) {
+    lenis.stop();
+    menuTl.timeScale(1).play();
+  } else {
+    lenis.start();
+    menuTl.timeScale(1.7).reverse();
+  }
+}
+
+navToggle.addEventListener('click', () => setMenu(!menuOpen));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && menuOpen) setMenu(false);
+});
+menuEl.querySelectorAll('a').forEach(a =>
+  a.addEventListener('click', () => setMenu(false))
+);
 
 /* ------------------------------------------------------------
    Brand title -> individual letters (for the tracking-in intro)
@@ -451,12 +500,16 @@ function buildScrollScenes() {
     scrollTrigger: { trigger: '#booking', start: 'top 66%' },
   });
 
-  /* --- Sticky CTA after 50% of total scroll ------------------- */
+  /* --- Sticky CTA (50%) + bara de progres ---------------------- */
   const cta = document.getElementById('ctaSticky');
+  const progressBar = document.getElementById('scrollProgress');
   ScrollTrigger.create({
     start: 0,
     end: () => ScrollTrigger.maxScroll(window),
-    onUpdate: self => cta.classList.toggle('is-visible', self.progress >= 0.5),
+    onUpdate: self => {
+      cta.classList.toggle('is-visible', self.progress >= 0.5);
+      progressBar.style.transform = `scaleX(${self.progress})`;
+    },
   });
 
   ScrollTrigger.refresh();

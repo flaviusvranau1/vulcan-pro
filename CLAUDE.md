@@ -5,6 +5,17 @@ personalizat rapid pentru fiecare client și trimis ca demo. Site cinematic „3
 scroll-ul rotește roata (secvență de cadre pe canvas), cu Lenis + GSAP ScrollTrigger.
 Totul e static — fără build step, fără dependențe npm.
 
+## Semnalarea schimbărilor (OBLIGATORIU)
+
+Orice modificare pe care o faci — oricât de mică — se semnalează ca să o vadă
+și ceilalți care lucrează pe șablon:
+
+1. **Adaugă o intrare în `CHANGELOG.md`** (versiune nouă + data + ce s-a schimbat,
+   pe scurt, în română), înainte de commit.
+2. **Commit cu mesaj descriptiv** în română (prima linie = rezumatul schimbării).
+3. Dacă schimbi comportamentul (nu doar config), actualizează și secțiunea
+   relevantă din acest fișier.
+
 ## Cum personalizezi pentru un client nou
 
 1. **Modifică DOAR `config.js`** — nume, tagline, oraș, telefon, WhatsApp (cu mesaj

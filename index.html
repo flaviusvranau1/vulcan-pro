@@ -35,7 +35,33 @@
   <header class="site-head">
     <div class="head-brand mono">VULCAN&nbsp;PRO</div>
     <div class="head-tag mono">GRIP MASTER PROGRAM</div>
+    <button id="navToggle" class="nav-toggle" aria-label="Meniu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span><span></span>
+    </button>
   </header>
+
+  <!-- SCROLL PROGRESS -->
+  <div id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- MENIU OVERLAY -->
+  <nav id="menu" class="menu" aria-hidden="true">
+    <div class="menu-inner">
+      <div class="menu-links">
+        <a class="menu-link" href="#hero"><span class="menu-idx mono">00</span><span class="menu-label">Start</span></a>
+        <a class="menu-link" href="#story"><span class="menu-idx mono">01</span><span class="menu-label">Aderența</span></a>
+        <a class="menu-link" href="#macro"><span class="menu-idx mono">02</span><span class="menu-label">Materie</span></a>
+        <a class="menu-link" href="#precision"><span class="menu-idx mono">03</span><span class="menu-label">Protocol</span></a>
+        <a class="menu-link" href="#seasons"><span class="menu-idx mono">04</span><span class="menu-label">Sezon</span></a>
+        <a class="menu-link" href="#services"><span class="menu-idx mono">05</span><span class="menu-label">Servicii</span></a>
+        <a class="menu-link" href="#process"><span class="menu-idx mono">06</span><span class="menu-label">Flux</span></a>
+        <a class="menu-link menu-link--cta" href="#booking"><span class="menu-idx mono">07</span><span class="menu-label">Rezervă</span></a>
+      </div>
+      <div class="menu-foot mono">
+        <a id="menuPhone" href="#"></a>
+        <span id="menuHours"></span>
+      </div>
+    </div>
+  </nav>
 
   <main>
     <!-- 01 — HERO ORBIT -->
@@ -135,6 +161,14 @@
         <p class="seasons-meta mono">SWAP COMPLET ÎN 45 MIN &middot; DEPOZITARE 2 SEZOANE &middot; MONITORIZARE DOT</p>
       </div>
     </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-text">Grip Master Program&ensp;&middot;&ensp;Montaj Touchless&ensp;&middot;&ensp;Echilibrare ±1g&ensp;&middot;&ensp;Hotel Anvelope&ensp;&middot;&ensp;</span>
+        <span class="marquee-text">Grip Master Program&ensp;&middot;&ensp;Montaj Touchless&ensp;&middot;&ensp;Echilibrare ±1g&ensp;&middot;&ensp;Hotel Anvelope&ensp;&middot;&ensp;</span>
+      </div>
+    </div>
 
     <!-- 06 — SERVICES & TARIFE -->
     <section id="services">
