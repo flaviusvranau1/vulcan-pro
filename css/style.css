@@ -357,6 +357,7 @@ body.menu-open .menu { pointer-events: auto; }
 /* nume de firmă lungi (setat din JS peste 14 caractere) */
 #brandTitle.brand-long { font-size: clamp(40px, 8.5vw, 120px); }
 #brandTitle .ltr { display: inline-block; }
+#brandTitle .wrd { display: inline-block; white-space: nowrap; }
 #brandTitle .ltr-space { display: inline-block; width: 0.28em; }
 
 .hero-sub { margin-top: 4vh; display: flex; flex-direction: column; gap: 14px; }
