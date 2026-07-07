@@ -24,8 +24,11 @@ Orice modificare pe care o faci — oricât de mică — se semnalează ca să o
 2. **`index.html`**: actualizează `<title>`, `<meta name="description">` și
    `og:title` (sunt citite de Google/WhatsApp înainte să ruleze JS).
    La varianta finală scoate „DEMO CONCEPT — SITE FICTIV" din `footerNote` (config.js).
-3. **Nume scurte funcționează cel mai bine în hero** (1–2 cuvinte). Numele lungi
-   trec automat pe două rânduri sub 1024px — verifică vizual dacă arată bine.
+3. **Numele se scurtează automat pentru afișare** în hero/header/preloader:
+   forma juridică (SRL, PFA, SA…) și parantezele sunt eliminate, iar numele
+   lungi primesc trepte de font mai mici (`brand-long` >14, `brand-xlong` >24
+   caractere). Numele complet rămâne în `<title>`, footer și aria-label.
+   Nu „repara" asta scriind numele juridic în hero.
 4. **NU modifica** `js/main.js`, `css/style.css` sau structura secțiunilor decât
    dacă ți se cere explicit — scrub-ul, pin-urile și fallback-ul mobil sunt calibrate.
 

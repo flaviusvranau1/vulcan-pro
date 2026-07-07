@@ -28,19 +28,38 @@ function applyConfig() {
 
   document.title = `${name} — ${tagline}`;
 
-  // logo preloader: ultimul cuvânt colorat cu accent
-  const words = name.trim().split(' ');
-  const lastWord = words.length > 1 ? words.pop() : '';
-  document.querySelector('.pre-logo').innerHTML =
-    words.join(' ') + (lastWord ? `<span>${lastWord}</span>` : '');
+  // numele AFIȘAT în hero/header/preloader: fără forma juridică și paranteze
+  // (numele complet rămâne în <title>, footer și date de contact)
+  let dispName = name.replace(/\s*\([^)]*\)/g, ' ').trim();
+  dispName = dispName
+    .replace(/[,\s]+(s\.?r\.?l\.?-?d?|s\.?a\.?|p\.?f\.?a\.?|s\.?n\.?c\.?|[iî]\.?[iî]\.?)\.?$/i, '')
+    .trim() || name;
 
-  document.querySelector('.head-brand').textContent = name;
+  // trepte de mărime după lungimea numelui afișat
+  const sizeTier = el => {
+    el.classList.toggle('brand-long', dispName.length > 14 && dispName.length <= 24);
+    el.classList.toggle('brand-xlong', dispName.length > 24);
+  };
+
+  // logo preloader: ultimul cuvânt colorat cu accent
+  const preLogo = document.querySelector('.pre-logo');
+  const words = dispName.split(' ');
+  const lastWord = words.length > 1 ? words.pop() : '';
+  preLogo.innerHTML = '';
+  preLogo.append(words.join(' '));
+  if (lastWord) {
+    const sp = document.createElement('span');
+    sp.textContent = lastWord;
+    preLogo.appendChild(sp);
+  }
+  sizeTier(preLogo);
+
+  document.querySelector('.head-brand').textContent = dispName;
   document.querySelector('.head-tag').textContent = tagline.toUpperCase();
   const titleEl = document.getElementById('brandTitle');
-  titleEl.textContent = name;
+  titleEl.textContent = dispName;
   titleEl.setAttribute('aria-label', name);
-  // numele lungi de firmă primesc un corp de literă mai mic
-  titleEl.classList.toggle('brand-long', name.length > 14);
+  sizeTier(titleEl);
   document.querySelector('.hero-program').textContent = tagline;
 
   // servicii & tarife
@@ -274,6 +293,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     const target = document.querySelector(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
+    // ORDINEA contează: lenis.start() (din închiderea meniului) resetează
+    // animația curentă de scroll — deci întâi închidem meniul, apoi pornim scroll-ul
+    if (menuOpen) setMenu(false);
     lenis.scrollTo(target, { duration: 1.6, force: true });
   });
 });
@@ -311,9 +333,8 @@ navToggle.addEventListener('click', () => setMenu(!menuOpen));
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && menuOpen) setMenu(false);
 });
-menuEl.querySelectorAll('a').forEach(a =>
-  a.addEventListener('click', () => setMenu(false))
-);
+// închiderea la click pe link e gestionată în handler-ul global de ancore
+// (înainte de scrollTo) — nu adăuga aici un al doilea listener de închidere
 
 /* ------------------------------------------------------------
    Brand title -> individual letters (for the tracking-in intro)

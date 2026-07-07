@@ -6,9 +6,17 @@ Toate schimbările notabile ale șablonului se notează aici, cu cea mai recent�
 
 ## 1.3.1 — 2026-07-07
 
+- **Reparat: navigarea din meniu nu funcționa deloc** — `lenis.start()` (apelat
+  la închiderea meniului) reseta animația de scroll pornită de click; acum meniul
+  se închide întâi, apoi pornește scroll-ul (aterizare exactă pe secțiune)
+- **Nume de firmă afișat inteligent**: forma juridică (SRL/PFA/SA…) și parantezele
+  se elimină automat din hero/header/preloader (numele complet rămâne în title,
+  footer, aria-label); trepte de font: >14 caractere `brand-long`, >24 `brand-xlong`
 - **Fix:** numele lungi de firmă din hero nu se mai rup în mijlocul cuvântului
-  (literele animate sunt grupate acum pe cuvinte întregi, cu spații care permit
-  trecerea pe rând doar între cuvinte) — ex. „Vulcanizare AUTO Mari Cris SRL"
+  (literele animate sunt grupate pe cuvinte întregi — trecerea pe rând se face
+  doar între cuvinte)
+- Header: numele lung se taie cu ellipsis (nu se mai suprapune cu hamburger-ul)
+- Preloader: logo centrat, cu aceleași trepte de mărime
 
 ## 1.3.0 — 2026-07-07
 

@@ -73,9 +73,14 @@ body::after {
   font-size: clamp(40px, 7vw, 88px);
   letter-spacing: 0.06em;
   color: var(--ink);
-  line-height: 1;
+  line-height: 1.05;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 92vw;
 }
 .pre-logo span { color: var(--accent); margin-left: 0.18em; }
+.pre-logo.brand-long  { font-size: clamp(30px, 5vw, 60px); }
+.pre-logo.brand-xlong { font-size: clamp(22px, 4vw, 44px); }
 
 .pre-bar {
   width: min(320px, 60vw);
@@ -115,7 +120,15 @@ body::after {
   mix-blend-mode: difference;
   pointer-events: none;
 }
-.head-brand { font-size: 13px; letter-spacing: 0.3em; color: #fff; }
+.head-brand {
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: #fff;
+  max-width: 38vw;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .head-tag {
   position: absolute;
   left: 50%;
@@ -354,8 +367,9 @@ body.menu-open .menu { pointer-events: auto; }
   text-shadow: 0 0 80px rgba(62, 176, 214, 0.25);
   max-width: 94vw;
 }
-/* nume de firmă lungi (setat din JS peste 14 caractere) */
-#brandTitle.brand-long { font-size: clamp(40px, 8.5vw, 120px); }
+/* nume de firmă lungi (trepte setate din JS după lungime) */
+#brandTitle.brand-long  { font-size: clamp(38px, 8.5vw, 110px); }
+#brandTitle.brand-xlong { font-size: clamp(32px, 8.5vw, 76px); letter-spacing: 0.03em; }
 #brandTitle .ltr { display: inline-block; }
 #brandTitle .wrd { display: inline-block; white-space: nowrap; }
 #brandTitle .ltr-space { display: inline-block; width: 0.28em; }
@@ -923,6 +937,7 @@ a.contact-val:hover { color: var(--ice); }
   .season-slash { display: none; }
 
   .head-tag { display: none; }
+  .head-brand { max-width: 62vw; }
 
   .svc-row { grid-template-columns: 3ch 1fr; row-gap: 8px; }
   .svc-price { grid-column: 2; }
