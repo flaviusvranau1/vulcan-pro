@@ -122,10 +122,14 @@ try { applyConfig(); } catch (e) { console.error('Config error:', e); }
    Frame sequence: preload + cover-fit canvas rendering
    ------------------------------------------------------------ */
 class FrameSequence {
-  constructor(path, count, canvas) {
+  // fit: 'cover' = umple ecranul (crop); 'auto' = pe portret devine bandă
+  // cinematică completă (subiectul întreg, fundal negru topit în pagină)
+  constructor(path, count, canvas, opts = {}) {
     this.path = path;
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
+    this.fitMode = opts.fit || 'auto';
+    this.offsetY = opts.offsetY || 0;
     this.images = [];
     this.ready = false;
     this.current = 0;
@@ -154,8 +158,10 @@ class FrameSequence {
   }
 
   fit() {
-    const w = this.canvas.clientWidth;
-    const h = this.canvas.clientHeight;
+    // în tab-uri de fundal layout-ul poate lipsi (clientWidth 0) —
+    // canvas-ul e mereu full-viewport, deci fereastra e un fallback corect
+    const w = this.canvas.clientWidth || window.innerWidth;
+    const h = this.canvas.clientHeight || window.innerHeight;
     if (!w || !h) return;
     this.canvas.width = Math.round(w * DPR);
     this.canvas.height = Math.round(h * DPR);
@@ -183,27 +189,61 @@ class FrameSequence {
     const img = this.imageNear(i);
     if (!img) return;
     const cw = this.canvas.width, ch = this.canvas.height;
-    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-    const dw = img.naturalWidth * scale, dh = img.naturalHeight * scale;
-    this.ctx.clearRect(0, 0, cw, ch);
-    this.ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const coverScale = Math.max(cw / iw, ch / ih);
+    const portrait = cw / ch < 0.8;
+
+    // pe portret, clipurile 16:9 cu subiect central nu se decupează:
+    // se afișează ca bandă completă, ușor mărită (max 1.35x fit-width)
+    let scale = coverScale;
+    if (this.fitMode === 'auto' && portrait) {
+      scale = Math.min(coverScale, (cw / iw) * 1.35);
+    }
+
+    const dw = iw * scale, dh = ih * scale;
+    const dx = (cw - dw) / 2;
+    const dy = (ch - dh) / 2 + (portrait ? ch * this.offsetY : 0);
+
+    // fundal negru pur = fundalul clipurilor, banda se topește în pagină
+    this.ctx.fillStyle = '#000';
+    this.ctx.fillRect(0, 0, cw, ch);
+    this.ctx.drawImage(img, dx, dy, dw, dh);
+
+    // estompează muchiile orizontale ale benzii (fără margini vizibile)
+    if (dh < ch - 2) {
+      const fade = Math.min(dh * 0.18, 90 * DPR);
+      let g = this.ctx.createLinearGradient(0, dy, 0, dy + fade);
+      g.addColorStop(0, 'rgba(0,0,0,1)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      this.ctx.fillStyle = g;
+      this.ctx.fillRect(0, dy, cw, fade);
+      g = this.ctx.createLinearGradient(0, dy + dh - fade, 0, dy + dh);
+      g.addColorStop(0, 'rgba(0,0,0,0)');
+      g.addColorStop(1, 'rgba(0,0,0,1)');
+      this.ctx.fillStyle = g;
+      this.ctx.fillRect(0, dy + dh - fade, cw, fade);
+    }
   }
 }
 
 const seqs = {
-  hero:     new FrameSequence('frames/hero',     120, document.getElementById('heroCanvas')),
-  macro:    new FrameSequence('frames/macro',    100, document.getElementById('macroCanvas')),
-  assembly: new FrameSequence('frames/assembly', 100, document.getElementById('assemblyCanvas')),
+  // hero + assembly: subiect central -> bandă completă pe portret (offsetY
+  // coboară puțin banda, ca titlul să respire); macro: textură -> cover peste tot
+  hero:     new FrameSequence('frames/hero',     120, document.getElementById('heroCanvas'), { fit: 'auto', offsetY: 0.06 }),
+  macro:    new FrameSequence('frames/macro',    100, document.getElementById('macroCanvas'), { fit: 'cover' }),
+  assembly: new FrameSequence('frames/assembly', 100, document.getElementById('assemblyCanvas'), { fit: 'auto' }),
 };
+
+function refitAll() {
+  Object.values(seqs).forEach(s => { s.fit(); s.draw(s.current); });
+  ScrollTrigger.refresh();
+}
 
 // redimensionare cu debounce — stabil la rotirea telefonului / resize
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    Object.values(seqs).forEach(s => { s.fit(); s.draw(s.current); });
-    ScrollTrigger.refresh();
-  }, 150);
+  resizeTimer = setTimeout(refitAll, 150);
 });
 
 /* ------------------------------------------------------------
@@ -270,7 +310,9 @@ seqs.hero.load(p => {
   prePct.textContent = pct + '%';
 }).then(() => {
   buildScrollScenes();
-  whenVisible(introReveal);
+  // dacă pagina s-a încărcat într-un tab de fundal, dimensiunile pot fi
+  // greșite — refă încadrarea când tab-ul devine vizibil, apoi intro-ul
+  whenVisible(() => { refitAll(); introReveal(); });
   // background-load the remaining sequences
   seqs.macro.load().then(() => seqs.macro.draw(seqs.macro.current));
   seqs.assembly.load().then(() => seqs.assembly.draw(seqs.assembly.current));

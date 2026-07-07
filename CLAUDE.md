@@ -43,6 +43,10 @@ Checklist de verificare după personalizare (toate au fost validate pe șablon):
 - **<380px**: fonturi reduse, specificațiile din hero ascunse
 - **landscape scund (<560px înălțime)**: hero compact, scroll-hint ascuns
 - `100svh` pe secțiunile sticky — bara de adresă mobilă nu produce salturi
+- **portret (telefon)**: clipurile 16:9 cu subiect central (hero + assembly) NU se
+  decupează — se afișează ca bandă cinematică completă, ușor mărită, cu muchiile
+  estompate în negru (logica e în `FrameSequence.draw()`, opțiunea `fit: 'auto'`);
+  macro-ul rămâne `cover` intenționat (e textură, crop-ul arată bine)
 
 ## Stabilitate (nu strica aceste mecanisme)
 
