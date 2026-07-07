@@ -1,0 +1,797 @@
+/* ============================================================
+   VULCAN PRO — Grip Master Program
+   ============================================================ */
+
+:root {
+  --bg: #0A0C0E;
+  --bg-lift: #0E1114;
+  --ink: #E8ECEF;
+  --ink-dim: #7C868D;
+  --accent: #3EB0D6;        /* electric steel / petrol blue */
+  --accent-deep: #14556B;
+  --ice: #BFEAF7;
+  --line: rgba(62, 176, 214, 0.22);
+  --display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --mono: 'IBM Plex Mono', 'Consolas', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { background: var(--bg); }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.is-loading { overflow: hidden; height: 100vh; }
+
+.mono {
+  font-family: var(--mono);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+/* ------------------------------------------------------------
+   PRELOADER
+   ------------------------------------------------------------ */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.pre-logo {
+  font-family: var(--display);
+  font-size: clamp(40px, 7vw, 88px);
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  line-height: 1;
+}
+.pre-logo span { color: var(--accent); margin-left: 0.18em; }
+
+.pre-bar {
+  width: min(320px, 60vw);
+  height: 2px;
+  background: rgba(232, 236, 239, 0.12);
+  overflow: hidden;
+}
+.pre-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.15s linear;
+}
+
+.pre-meta {
+  display: flex;
+  gap: 18px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.22em;
+}
+#prePct { color: var(--accent); min-width: 4ch; text-align: right; }
+
+/* ------------------------------------------------------------
+   HEADER
+   ------------------------------------------------------------ */
+.site-head {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px clamp(20px, 4vw, 48px);
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+.head-brand { font-size: 13px; letter-spacing: 0.3em; color: #fff; }
+.head-tag  { font-size: 11px; letter-spacing: 0.3em; color: rgba(255,255,255,0.55); }
+
+/* ------------------------------------------------------------
+   STICKY CTA
+   ------------------------------------------------------------ */
+.cta-sticky {
+  position: fixed;
+  right: clamp(16px, 3vw, 36px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  background: rgba(10, 12, 14, 0.72);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--ice);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.cta-sticky.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.cta-sticky:hover { border-color: var(--accent); background: rgba(20, 85, 107, 0.4); }
+.cta-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ------------------------------------------------------------
+   SCRUB SECTIONS (canvas + sticky stage)
+   ------------------------------------------------------------ */
+.scrub-section { position: relative; }
+#hero      { height: 420vh; }
+#macro     { height: 360vh; }
+#precision { height: 440vh; }
+
+.scrub-section .sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh; /* viewport stabil pe mobil (bara de adresă nu mai produce salturi) */
+  overflow: hidden;
+}
+
+.scrub-section canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.section-tag {
+  position: absolute;
+  top: 84px;
+  left: clamp(20px, 4vw, 48px);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+}
+
+/* ------------------------------------------------------------
+   01 — HERO
+   ------------------------------------------------------------ */
+.hero-ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.42em;
+  color: var(--accent);
+  margin-bottom: 3vh;
+}
+
+#brandTitle {
+  font-family: var(--display);
+  font-size: clamp(64px, 14vw, 210px);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-shadow: 0 0 80px rgba(62, 176, 214, 0.25);
+  white-space: nowrap;
+}
+#brandTitle .ltr { display: inline-block; }
+#brandTitle .ltr-space { display: inline-block; width: 0.28em; }
+
+.hero-sub { margin-top: 4vh; display: flex; flex-direction: column; gap: 14px; }
+.hero-program {
+  font-family: var(--display);
+  font-size: clamp(18px, 2.6vw, 32px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero-specs {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--ink-dim);
+}
+
+.hero-caption {
+  position: absolute;
+  left: clamp(20px, 6vw, 96px);
+  bottom: 18vh;
+  opacity: 0;
+  pointer-events: none;
+}
+.hero-caption p {
+  font-family: var(--display);
+  font-size: clamp(28px, 4.4vw, 64px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.hero-caption span { color: var(--accent); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  color: var(--ink-dim);
+}
+.scroll-line {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: drop 1.8s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes drop { 0% { transform: scaleY(0); } 55% { transform: scaleY(1); } 100% { transform: scaleY(0); opacity: 0; } }
+
+/* ------------------------------------------------------------
+   02 — STORY
+   ------------------------------------------------------------ */
+#story {
+  position: relative;
+  background:
+    radial-gradient(1200px 600px at 70% 20%, rgba(20, 85, 107, 0.16), transparent 65%),
+    var(--bg);
+  overflow: hidden;
+}
+
+.story-inner {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18vh clamp(20px, 8vw, 140px);
+  max-width: 1400px;
+}
+
+.story-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+  margin-bottom: 4vh;
+}
+
+.story-title {
+  font-family: var(--display);
+  font-size: clamp(56px, 11vw, 168px);
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 7vh;
+}
+.story-title span { color: var(--accent); }
+
+.story-lines { display: flex; flex-direction: column; gap: 2.4vh; }
+.story-line {
+  font-family: var(--mono);
+  font-size: clamp(15px, 1.8vw, 22px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.story-line--big {
+  margin-top: 5vh;
+  font-family: var(--display);
+  font-size: clamp(30px, 5vw, 72px);
+  line-height: 1.08;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+}
+.story-line--big em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------
+   03 — MACRO
+   ------------------------------------------------------------ */
+.macro-captions { position: absolute; inset: 0; pointer-events: none; }
+
+.macro-cap {
+  position: absolute;
+  left: clamp(20px, 6vw, 96px);
+  bottom: 16vh;
+  max-width: 520px;
+  opacity: 0;
+}
+.macro-cap[data-step="1"] { left: auto; right: clamp(20px, 6vw, 96px); text-align: right; }
+
+.macro-cap figcaption {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.macro-cap p {
+  font-family: var(--display);
+  font-size: clamp(26px, 3.8vw, 54px);
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ------------------------------------------------------------
+   04 — PRECISION
+   ------------------------------------------------------------ */
+.spec-callouts {
+  position: absolute;
+  right: clamp(20px, 5vw, 72px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: min(420px, 84vw);
+  pointer-events: none;
+}
+
+.spec {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 18px;
+  border-left: 1px solid var(--line);
+  opacity: 0;
+  transform: translateX(28px);
+}
+.spec-key {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+}
+.spec-val {
+  font-family: var(--display);
+  font-size: clamp(20px, 2.6vw, 34px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+/* ------------------------------------------------------------
+   05 — SEASONS
+   ------------------------------------------------------------ */
+#seasons {
+  position: relative;
+  background:
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-lift) 50%, var(--bg) 100%);
+  border-top: 1px solid rgba(62, 176, 214, 0.08);
+  border-bottom: 1px solid rgba(62, 176, 214, 0.08);
+}
+
+.seasons-inner {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16vh 20px;
+}
+
+.seasons-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+  margin-bottom: 5vh;
+}
+
+.seasons-title {
+  font-family: var(--display);
+  font-size: clamp(58px, 12vw, 190px);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 0.18em;
+  overflow: hidden;
+}
+.season-word { display: inline-block; }
+.season-word:last-child { color: var(--accent); }
+.season-slash { color: var(--accent-deep); font-size: 0.8em; }
+
+.seasons-facts {
+  margin-top: 7vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+.season-fact {
+  font-size: clamp(16px, 2vw, 24px);
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+}
+.season-fact strong { color: var(--ice); font-weight: 500; }
+
+.seasons-meta {
+  margin-top: 8vh;
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+/* ------------------------------------------------------------
+   06 — SERVICES & TARIFE
+   ------------------------------------------------------------ */
+#services { position: relative; background: var(--bg); }
+
+.services-inner {
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16vh clamp(20px, 6vw, 80px);
+}
+
+.services-eyebrow, .process-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+  margin-bottom: 4vh;
+}
+
+.services-title, .process-title {
+  font-family: var(--display);
+  font-size: clamp(44px, 8vw, 120px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6vh;
+}
+.services-title span, .process-title span { color: var(--accent); }
+
+.services-list { border-top: 1px solid rgba(232, 236, 239, 0.1); }
+
+.svc-row {
+  display: grid;
+  grid-template-columns: 3ch 1fr auto;
+  gap: clamp(14px, 3vw, 32px);
+  align-items: baseline;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(232, 236, 239, 0.1);
+}
+.svc-idx {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+.svc-name {
+  font-family: var(--display);
+  font-size: clamp(20px, 2.8vw, 38px);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+}
+.svc-detail {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.svc-price {
+  font-family: var(--mono);
+  font-size: clamp(12px, 1.3vw, 15px);
+  letter-spacing: 0.08em;
+  color: var(--ice);
+  white-space: nowrap;
+}
+
+.services-note {
+  margin-top: 5vh;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--ink-dim);
+}
+
+/* ------------------------------------------------------------
+   07 — PROCESS
+   ------------------------------------------------------------ */
+#process {
+  position: relative;
+  background:
+    radial-gradient(1000px 500px at 30% 80%, rgba(20, 85, 107, 0.14), transparent 65%),
+    var(--bg-lift);
+  border-top: 1px solid rgba(62, 176, 214, 0.08);
+}
+
+.process-inner {
+  min-height: 90vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16vh clamp(20px, 6vw, 80px);
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 4vw, 64px);
+  margin-top: 4vh;
+}
+
+.step {
+  border-left: 1px solid var(--line);
+  padding-left: 22px;
+}
+.step-num {
+  display: block;
+  font-family: var(--display);
+  font-size: clamp(44px, 6vw, 84px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--accent);
+}
+.step-title {
+  font-family: var(--display);
+  font-size: clamp(20px, 2.4vw, 34px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 16px 0 10px;
+}
+.step-detail {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  line-height: 1.8;
+}
+
+/* ------------------------------------------------------------
+   08 — BOOKING
+   ------------------------------------------------------------ */
+#booking {
+  position: relative;
+  background:
+    radial-gradient(900px 500px at 50% 100%, rgba(20, 85, 107, 0.22), transparent 70%),
+    var(--bg);
+}
+
+.booking-inner {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16vh 20px;
+}
+
+.booking-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+  margin-bottom: 4vh;
+}
+
+.booking-title {
+  font-family: var(--display);
+  font-size: clamp(56px, 11vw, 170px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 7vh;
+}
+.booking-title span { color: var(--accent); }
+
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.booking-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 44px;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.28em;
+  color: var(--bg);
+  background: var(--accent);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.booking-btn:hover {
+  background: var(--ice);
+  box-shadow: 0 0 60px rgba(62, 176, 214, 0.45);
+  transform: translateY(-2px);
+}
+.btn-arrow { font-family: var(--mono); }
+
+.booking-call {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--ink-dim);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.booking-call:hover { color: var(--ice); }
+.booking-call span { color: var(--accent); }
+
+.contact-grid {
+  margin-top: 9vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(24px, 6vw, 80px);
+}
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 170px;
+  text-align: center;
+}
+.contact-key {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+}
+.contact-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1.6;
+}
+a.contact-val:hover { color: var(--ice); }
+
+/* ------------------------------------------------------------
+   FOOTER
+   ------------------------------------------------------------ */
+.site-foot {
+  padding: 34px 20px;
+  text-align: center;
+  border-top: 1px solid rgba(232, 236, 239, 0.06);
+}
+.site-foot p {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--ink-dim);
+}
+
+/* ------------------------------------------------------------
+   TABLET (< 1024px) — numele clientului poate fi mai lung,
+   lasă titlul să treacă pe rândul următor
+   ------------------------------------------------------------ */
+@media (max-width: 1023px) {
+  #brandTitle { white-space: normal; }
+
+  .spec-callouts { width: min(360px, 80vw); }
+}
+
+/* ------------------------------------------------------------
+   MOBILE (< 768px)
+   ------------------------------------------------------------ */
+@media (max-width: 767px) {
+  #hero      { height: 300vh; }
+  #macro     { height: 280vh; }
+  #precision { height: 320vh; }
+
+  .hero-caption { bottom: 24vh; left: 20px; right: 20px; }
+
+  .macro-cap { bottom: 12vh; max-width: none; right: 20px; }
+  .macro-cap[data-step="1"] { text-align: left; }
+
+  .spec-callouts {
+    right: 20px;
+    left: 20px;
+    width: auto;
+    top: auto;
+    bottom: 9vh;
+    transform: none;
+    gap: 16px;
+  }
+
+  .seasons-title { flex-direction: column; align-items: center; gap: 0; }
+  .season-slash { display: none; }
+
+  .head-tag { display: none; }
+
+  .svc-row { grid-template-columns: 3ch 1fr; row-gap: 8px; }
+  .svc-price { grid-column: 2; }
+
+  .process-steps { grid-template-columns: 1fr; gap: 34px; }
+
+  .contact-grid { flex-direction: column; align-items: center; gap: 26px; }
+}
+
+/* ------------------------------------------------------------
+   ECRANE FOARTE MICI (< 380px)
+   ------------------------------------------------------------ */
+@media (max-width: 379px) {
+  #brandTitle { font-size: clamp(44px, 16vw, 60px); }
+  .story-title, .booking-title { font-size: clamp(40px, 14vw, 54px); }
+  .seasons-title { font-size: clamp(44px, 15vw, 56px); }
+  .services-title, .process-title { font-size: clamp(36px, 12vw, 44px); }
+  .hero-caption p, .macro-cap p { font-size: clamp(22px, 7.5vw, 28px); }
+  .story-line--big { font-size: clamp(26px, 8.5vw, 30px); }
+  .booking-btn { padding: 18px 28px; font-size: 12px; letter-spacing: 0.2em; }
+  .cta-sticky { padding: 12px 16px; font-size: 11px; }
+  .hero-specs { display: none; }
+}
+
+/* ------------------------------------------------------------
+   LANDSCAPE SCUND (telefon pe orizontală, < 560px înălțime)
+   ------------------------------------------------------------ */
+@media (max-height: 560px) and (orientation: landscape) {
+  #brandTitle { font-size: clamp(36px, 9vw, 88px); }
+  .hero-eyebrow { margin-bottom: 2vh; }
+  .hero-sub { margin-top: 2vh; gap: 8px; }
+  .hero-program { font-size: clamp(14px, 2vw, 22px); }
+  .hero-specs { display: none; }
+  .scroll-hint { display: none; }
+  .hero-caption { bottom: 10vh; }
+  .hero-caption p { font-size: clamp(20px, 4vw, 36px); }
+  .macro-cap { bottom: 8vh; }
+  .macro-cap p { font-size: clamp(18px, 3.4vw, 34px); }
+  .spec-callouts { gap: 10px; }
+  .spec { gap: 3px; padding-left: 12px; }
+  .spec-val { font-size: clamp(14px, 2vw, 20px); }
+  .section-tag { top: 60px; }
+  .story-inner, .seasons-inner, .booking-inner,
+  .services-inner, .process-inner { padding-top: 12vh; padding-bottom: 12vh; }
+}
+
+/* ------------------------------------------------------------
+   REDUCED MOTION
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-line, .cta-dot { animation: none; }
+}
