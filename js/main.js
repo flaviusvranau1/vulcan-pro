@@ -36,8 +36,11 @@ function applyConfig() {
 
   document.querySelector('.head-brand').textContent = name;
   document.querySelector('.head-tag').textContent = tagline.toUpperCase();
-  document.getElementById('brandTitle').textContent = name;
-  document.getElementById('brandTitle').setAttribute('aria-label', name);
+  const titleEl = document.getElementById('brandTitle');
+  titleEl.textContent = name;
+  titleEl.setAttribute('aria-label', name);
+  // numele lungi de firmă primesc un corp de literă mai mic
+  titleEl.classList.toggle('brand-long', name.length > 14);
   document.querySelector('.hero-program').textContent = tagline;
 
   // servicii & tarife

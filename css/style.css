@@ -352,8 +352,10 @@ body.menu-open .menu { pointer-events: auto; }
   letter-spacing: 0.04em;
   color: var(--ink);
   text-shadow: 0 0 80px rgba(62, 176, 214, 0.25);
-  white-space: nowrap;
+  max-width: 94vw;
 }
+/* nume de firmă lungi (setat din JS peste 14 caractere) */
+#brandTitle.brand-long { font-size: clamp(40px, 8.5vw, 120px); }
 #brandTitle .ltr { display: inline-block; }
 #brandTitle .ltr-space { display: inline-block; width: 0.28em; }
 
@@ -890,8 +892,6 @@ a.contact-val:hover { color: var(--ice); }
    lasă titlul să treacă pe rândul următor
    ------------------------------------------------------------ */
 @media (max-width: 1023px) {
-  #brandTitle { white-space: normal; }
-
   .spec-callouts { width: min(360px, 80vw); }
 }
 
